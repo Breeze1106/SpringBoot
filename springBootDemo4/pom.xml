@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.djs</groupId>
-	<artifactId>springBootDemo3</artifactId>
+	<artifactId>springBootDemo4</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<name>springBootDemo3</name>
+	<name>springBootDemo4</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
