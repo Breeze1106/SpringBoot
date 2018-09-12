@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.djs.entity.GoodEntity;
 import com.djs.entity.QGoodEntity;
 import com.djs.jpa.GoodJPA;
+import com.djs.jpa.Inquirer;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 
@@ -53,7 +54,7 @@ public class QueryController {
 	public List<GoodEntity> join(){
 		//querydsl查询实体
 		QGoodEntity _good = QGoodEntity.goodEntity;
-		//查询条件 
+		/*//查询条件 
 		BooleanExpression expression = _good.type.id.eq(Long.valueOf("1"));
 		//执行查询
 		Iterator<GoodEntity> iterator = goodJPA.findAll(expression).iterator();
@@ -61,7 +62,13 @@ public class QueryController {
 		//转成list
 		while(iterator.hasNext()) {
 			goods.add(iterator.next());
-		}
+		}*/
+		//自定义查询对象
+		Inquirer inquirer = new Inquirer();
+		//添加查询条件
+		inquirer.putExpression(_good.type.id.eq(Long.valueOf("1")));
+		Iterable<GoodEntity> findAll = goodJPA.findAll(inquirer.buidleQuery());
+		List<GoodEntity> goods = inquirer.iteratorToList(findAll);
 		return goods;
 	}
 }
