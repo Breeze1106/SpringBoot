@@ -43,5 +43,6 @@ implements LogoutSuccessHandler{
 				tokenStore.removeAccessToken(oAuth2AccessToken);
 			}
 		}
+		response.setStatus(HttpServletResponse.SC_OK);
 	}
 }

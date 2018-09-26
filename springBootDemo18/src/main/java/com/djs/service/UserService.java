@@ -1,6 +1,7 @@
 package com.djs.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,7 +37,7 @@ import com.djs.jpa.UserJPA;
 public class UserService implements UserDetailsService{
 
 	@Autowired
-	private UserJPA userJPA;
+	private UserJPA userRepository;
 	
 	/**
 	 * 自定义UserDetailsService用来从数据库中根据用户名查询用户信息
@@ -46,22 +47,23 @@ public class UserService implements UserDetailsService{
 	@Transactional
 	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 		String lowercaseLogin = login.toLowerCase();
-		
-		User userFromDatabase = userJPA.findByUsernameCaseInsensitive(lowercaseLogin);
-		
-		if(null == userFromDatabase) {
-			throw new UsernameNotFoundException("User "+lowercaseLogin + " was not found in the database");
-		}
-		//获取用户的所有权限并且SpringSecurity需要的集合
-		ArrayList<GrantedAuthority> grantedAuthoritys = new ArrayList<GrantedAuthority>();
-		for (Authority authority : userFromDatabase.getAuthorities()) {
-			SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getName());
-			grantedAuthoritys.add(grantedAuthority);
-		}
-		return new org.springframework.security.core.userdetails.User(
-				userFromDatabase.getUsername(),
-				userFromDatabase.getPassword(),
-				grantedAuthoritys);
+
+        User userFromDatabase = userRepository.findByUsernameCaseInsensitive(lowercaseLogin);
+
+        if (userFromDatabase == null) {
+            throw new NewUserNotFoundException("User " + lowercaseLogin + " was not found in the database");
+        }
+        //获取用户的所有权限并且SpringSecurity需要的集合
+        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        for (Authority authority : userFromDatabase.getAuthorities()) {
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getName());
+            grantedAuthorities.add(grantedAuthority);
+        }
+        //返回一个SpringSecurity需要的用户对象
+        return new org.springframework.security.core.userdetails.User(
+                userFromDatabase.getUsername(),
+                userFromDatabase.getPassword(),
+                grantedAuthorities);
 	}
 
 }

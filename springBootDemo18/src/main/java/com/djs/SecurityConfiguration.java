@@ -22,42 +22,36 @@ import com.djs.service.UserService;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	
 	//自定义UserDetailsService注入
-	@Autowired
-	private UserService userDetailsService;
-	
-	//配置匹配用户时密码规则
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new StandardPasswordEncoder();
-	}
-	
-	//配置全局设置
-	@Autowired
-	public void configuraGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		//设置UserDetailsService以及密码规则
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-	}
+    @Autowired
+    private UserService userDetailsService;
+    //配置匹配用户时密码规则
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new StandardPasswordEncoder();
+    }
+    //配置全局设置
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        //设置UserDetailsService以及密码规则
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+    //排除/hello路径拦截
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/hello");
+    }
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+    //开启全局方法拦截
+    @EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true)
+    public static class GlobalSecurityConfiguration extends GlobalMethodSecurityConfiguration {
+        @Override
+        protected MethodSecurityExpressionHandler createExpressionHandler() {
+            return new OAuth2MethodSecurityExpressionHandler();
+        }
 
-	//排除/hello路径拦截
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/hello");
-	}
-
-	@Override
-	@Bean
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
-	
-	//开启全局方法拦截
-	@EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true)
-	public static class GlobalSecurityConfiguration extends GlobalMethodSecurityConfiguration{
-
-		@Override
-		protected MethodSecurityExpressionHandler createExpressionHandler() {
-			return new OAuth2MethodSecurityExpressionHandler();
-		}
-		
-	}
+    }
 }

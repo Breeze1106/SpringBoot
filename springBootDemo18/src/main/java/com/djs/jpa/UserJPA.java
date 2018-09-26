@@ -13,6 +13,6 @@ public interface UserJPA extends JpaRepository<User, String>{
 	 * @param username
 	 * @return
 	 */
-	@Query("select u from user u where lower(u.username) = lower(:username)")
+	@Query("SELECT u FROM User u WHERE LOWER(u.username) = LOWER(:username)")
 	User findByUsernameCaseInsensitive(@Param("username") String username);
 }

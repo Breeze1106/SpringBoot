@@ -25,6 +25,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 			HttpServletResponse response,
 			AuthenticationException ae) throws IOException {
 		log.info("Pre-authenticated entry point called. Rejecting access");
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Access Denied");
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied");
 	}
 }
